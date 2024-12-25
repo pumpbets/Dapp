@@ -295,3 +295,39 @@
     border-radius: 8px;
     color: #fff;
 }
+
+/**
+My own style
+**/
+
+.maingrid {
+    display: grid;
+    gap: 16px; /* 每个格子的间距 */
+  }
+  
+  @media (min-width: 1200px) {
+    .maingrid {
+      grid-template-columns: repeat(3, 1fr); /* 每行 3 个 */
+    }
+  }
+  
+  @media (max-width: 1200px) and (min-width: 600px) {
+    .maingrid {
+      grid-template-columns: repeat(2, 1fr); /* 每行 2 个 */
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .maingrid {
+      grid-template-columns: repeat(1, 1fr); /* 每行 1 个 */
+    }
+  }
+  
+  .maingriditem {
+    background-color: lightblue;
+    padding: 16px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+  
