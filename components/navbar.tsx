@@ -25,6 +25,10 @@ import {
   Logo,
 } from "@/components/icons";
 
+import { useWallet } from "@solana/wallet-adapter-react";
+import { WalletNotConnectedError } from "@solana/wallet-adapter-base";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+
 export const Navbar = () => {
 
 
@@ -54,7 +58,7 @@ export const Navbar = () => {
           <Link isExternal href={siteConfig.links.github} title="GitHub">
             <GithubIcon className="text-default-500" />
           </Link>
-         
+         <WalletMultiButton className="btn btn-ghost" style={{height:"85%" , backgroundColor:"green"}} />
         </NavbarItem>
         {/* <NavbarItem className="hidden md:flex">
           <Button
@@ -74,13 +78,8 @@ export const Navbar = () => {
         <Link isExternal href={siteConfig.links.twitter} title="Twitter">
             <TwitterIcon className="text-default-500" />
           </Link>
-          <Link isExternal href={siteConfig.links.discord} title="Discord">
-            <DiscordIcon className="text-default-500" />
-          </Link>
-          <Link isExternal href={siteConfig.links.github} title="GitHub">
-            <GithubIcon className="text-default-500" />
-          </Link>
-       
+          
+          <Button> Connect Wallet</Button>
       </NavbarContent>
 
     </NextUINavbar>
