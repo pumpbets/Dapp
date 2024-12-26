@@ -62,7 +62,7 @@ export default function IndexPage() {
   
 
   const router = useRouter();
-  const { query } = router;
+
   
   useEffect(() => {
     
@@ -130,13 +130,18 @@ export default function IndexPage() {
 
     const init = async ()=>
     {
+      const params = new URLSearchParams(location.href)
+      let id = "";
+      params.forEach(e => {
+        id = e
+    });
       console.log(
-        "init"
+        "init",id,params,location.href
       )
-      const { id } = query;
+
       if(id)
       {
-        // onSearch(id as string).catch()
+        onSearch(id as string).catch()
       }else{
         onList().catch()
       }
