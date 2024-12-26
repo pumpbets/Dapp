@@ -13,6 +13,7 @@ const request_router = {
   pump:{
     list : pumpWebApi+"/list",
     search : pumpWebApi+"/find",
+    new : pumpWebApi+"/new"
   }
 
 };
@@ -91,7 +92,7 @@ async function api_bet_list(page:number,limit:number) {
     }
   }
 
-  async function api_bet_searc(search:string) {
+  async function api_bet_search(search:string) {
     try {
     return await requester(
         `${request_router.pump.search}?id=${search}`,
@@ -104,9 +105,29 @@ async function api_bet_list(page:number,limit:number) {
     }
   }
 
+  async function api_bet_new(bet:string,sign:string) {
+    try {
+    return await requester(
+        `${request_router.pump.new}`,
+        request_post_unauth(
+          {
+            msg:bet,
+            sign:sign
+          }
+        ),
+      );
+    } catch (e) {
+      console.error(e);
+  
+      return 0;
+    }
+  }
+
+
 export {
 
     api_price_oracle,
     api_bet_list,
-    api_bet_searc
+    api_bet_search,
+    api_bet_new
 };

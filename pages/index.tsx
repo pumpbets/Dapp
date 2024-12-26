@@ -23,10 +23,23 @@ import {Card, CardHeader, CardBody, Image} from "@nextui-org/react";
 import ScrollToTopButton from '@/components/totopbtn';
 import { useState, useEffect } from "react";
 
-import {api_bet_list } from "@/core/request"
+import {api_bet_list, api_bet_search,api_bet_new } from "@/core/request"
 
+import configData from "@/core/config"
+
+import { useRouter } from 'next/router';
+
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal } from "@solana/wallet-adapter-react-ui";
+
+import * as bs58 from "bs58"
 export default function IndexPage() {
+  const cfg = JSON.parse(JSON.stringify(configData))
+  const { connected, publicKey, signMessage } = useWallet();
+  const { setVisible } = useWalletModal();
   const [isSearch, setIsSearch] = useState(false);
+  const [inputData, setInputData] = useState("");
+  
   const [bets, setBets] = useState(
     [
       {
@@ -40,42 +53,241 @@ export default function IndexPage() {
       },
     ]
   )
+  
 
+  const router = useRouter();
+  const { query } = router;
+  
   useEffect(() => {
-    const onLoad = async ()=>
+    
+    setIsSearch(false)
+    const onList = async ()=>
       {
-        const list = await api_bet_list(1,10)
-        let dataList: any[] = [];
-        if(!list)
-        {
-          return false;
-        }
 
-        list.data.forEach((ele:any) => {
-          if(ele?.name && ele.token && ele.tokenInfo?.img,ele.id)
+        let dataList = bets;
+        dataList =             [
           {
-            dataList.push(
-              {
-                "id":ele.id,
-                "image":ele.tokenInfo?.img,
-                "token": ele.token,
-                "types":  ele.type,
-                "bets": ele.final,
-                "deadline": ele.deadline,
-                "bet":ele.final,
-              }
-            )
-          }
+            "id":"",
+            "image":"/logo.png",
+            "token": "$link",
+            "types": "price_lever_to_n",
+            "bets": "10",
+            "deadline": "default",
+            "bet": "Will $link leverage to 10X ?"
+          },
+          {
+            "id":"",
+            "image":"/logo.png",
+            "token": "$link",
+            "types": "price_lever_to_n",
+            "bets": "10",
+            "deadline": "default",
+            "bet": "Will $link leverage to 10X ?"
+          },
+          {
+            "id":"",
+            "image":"/logo.png",
+            "token": "$link",
+            "types": "price_lever_to_n",
+            "bets": "10",
+            "deadline": "default",
+            "bet": "Will $link leverage to 10X ?"
+          },
+          {
+            "id":"",
+            "image":"/logo.png",
+            "token": "$link",
+            "types": "price_lever_to_n",
+            "bets": "10",
+            "deadline": "default",
+            "bet": "Will $link leverage to 10X ?"
+          },
+          {
+            "id":"",
+            "image":"/logo.png",
+            "token": "$link",
+            "types": "price_lever_to_n",
+            "bets": "10",
+            "deadline": "default",
+            "bet": "Will $link leverage to 10X ?"
+          },
+        ]
+        console.log("dataList")
+        // setBets(dataList)
+        
 
-        });
+        // const list = await api_bet_list(1,10)
+        // let dataList: any[] = [];
+        // if(!list)
+        // {
+        //   return false;
+        // }
 
-        setBets(dataList);
+        // list.data.forEach((ele:any) => {
+        //   if(ele?.name && ele.token && ele.tokenInfo?.img,ele.id)
+        //   {
+        //     dataList.push(
+        //       {
+        //         "id":ele.id,
+        //         "image":ele.tokenInfo?.img,
+        //         "token": ele.token,
+        //         "types":  ele.types,
+        //         "bets": ele.final,
+        //         "deadline": ele.deadline,
+        //         "bet":ele.final,
+        //       }
+        //     )
+        //   }
+
+        // });
+        // console.log("dataList",dataList)
+        // setBets(dataList);
+      }
+    const onSearch = async (id:string)=>
+    {
+      const search = await api_bet_search(id)
+      let dataList: any[] = [];
+      if(!search)
+      {
+        return false;
       }
 
-      onLoad().catch()
+      const ele = search.data
+
+      if(ele?.name && ele.token && ele.tokenInfo?.img,ele.id)
+        {
+          dataList.push(
+            {
+              "id":ele.id,
+              "image":ele.tokenInfo?.img,
+              "token": ele.token,
+              "types":  ele.types,
+              "bets": ele.final,
+              "deadline": ele.deadline,
+              "bet":ele.final,
+            }
+          )
+        }
+
+      setBets(dataList);
+      setIsSearch(true)
+    }
+
+    const init = async ()=>
+    {
+      console.log(
+        "init"
+      )
+      const { id } = query;
+      if(id)
+      {
+        // onSearch(id as string).catch()
+      }else{
+        onList().catch()
+      }
+  
+    }
+
+    init().catch()
+
+    console.log(
+      "useEffect"
+    )
   }
 
 )
+
+const searchId = async (id:string)=>
+  {
+    const search = await api_bet_search(id)
+    let dataList: any[] = [];
+    if(!search)
+    {
+      return false;
+    }
+
+    const ele = search.data
+
+    if(ele?.name && ele.token && ele.tokenInfo?.img,ele.id)
+      {
+        dataList.push(
+          {
+            "id":ele.id,
+            "image":ele.tokenInfo?.img,
+            "token": ele.token,
+            "types":  ele.types,
+            "bets": ele.final,
+            "deadline": ele.deadline,
+            "bet":ele.final,
+          }
+        )
+      }
+
+    setBets(dataList);
+    setIsSearch(true)
+  }
+const betButtonGenerator = (t:any) =>
+{
+  // console.log(t)
+  if(t && cfg['betTyep'][t])
+  {
+    return (
+      <div className="w-full">
+
+      <div className="w-full flex ">
+      <Snippet hideCopyButton hideSymbol variant="bordered">
+        <span>
+          $120 | 1.2x
+        </span>
+      </Snippet>
+      <Button className="w-full" color="danger"> {cfg['betTyep'][t][0].name} </Button>
+      </div>
+      
+      <div className="w-full flex ">
+      <Snippet hideCopyButton hideSymbol variant="bordered">
+        <span>
+          $90 | 3.5x
+        </span>
+      </Snippet>
+      <Button className="w-full flex " color="success"> {cfg['betTyep'][t][1].name} </Button>
+      </div>
+
+      </div>
+    )
+  }
+  return <div></div>;
+}
+
+const newBet = async() =>
+{
+  console.log("Input data ::",inputData);
+  if(inputData && inputData.length>3)
+  {
+    if(connected && publicKey && signMessage)
+    {
+      
+      try {
+        const signature = await signMessage(new TextEncoder().encode(inputData));
+        console.log('Signature:', bs58.default.encode(signature));
+        const newBetPlace = await api_bet_new(
+          inputData,
+          bs58.default.encode(signature)
+        )
+        console.log("Bet place ret ::",newBetPlace)
+        if(newBetPlace && newBetPlace?.code == 200 && newBetPlace.data.id )
+        {
+          // router.push('/?id='+newBetPlace.data.id);
+          await searchId(newBetPlace.data.id)
+        }
+      } catch (error) {
+        console.error('Message signing failed:', error);
+      }
+    }else{
+      setVisible(true);
+    }
+
+  }
+}
 
   return (
     <DefaultLayout>
@@ -111,17 +323,22 @@ export default function IndexPage() {
       }
       type="search"
       style={{minWidth:'400px' , width:"40%"}}
+      onChange={
+        (e:any) => { setInputData(e.currentTarget.value); }
+      }
     />
           
         </div>
         <div className="flex gap-3">
 
           <Button
+          onClick={newBet}
                       className={buttonStyles({
                         color: "primary",
                         radius: "full",
                         variant: "shadow",
                       })}
+          
           >
             Tell me your bet ?
           </Button>
@@ -156,9 +373,9 @@ export default function IndexPage() {
           </div>
 
             <div className="maingrid">
-              {bets.map((item:any, index:any) => (
+              {/* {bets.map((item:any, index:any) => (
 
-                <div className="maingriditem">
+                <div className="maingriditem" key={index+item.id}>
                       <Card className="py-4">
                       <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
 
@@ -172,25 +389,10 @@ export default function IndexPage() {
                       <CardBody className="overflow-visible py-2">
                       <h4 className="font-bold text-large">🎲 {item.bet}</h4>
                       <p className="text-tiny uppercase font-bold">{item.token}</p>
-                      <small className="text-default-500">12 Tracks</small>
-                      <div className="w-full flex ">
-                      <Snippet hideCopyButton hideSymbol variant="bordered">
-                        <span>
-                          $120 | 1.2x
-                        </span>
-                      </Snippet>
-                      <Button className="w-full" color="danger"> Yes</Button>
-                      </div>
-                      
-                      <div className="w-full flex ">
-                      <Snippet hideCopyButton hideSymbol variant="bordered">
-                        <span>
-                          $90 | 3.5x
-                        </span>
-                      </Snippet>
-                      <Button className="w-full flex " color="success"> No</Button>
-                      </div>
+                      <small className="text-default-500">${item.types}</small>
 
+
+                      {betButtonGenerator(item.types)}
                       
                       </CardBody>
                       <CardFooter>
@@ -201,7 +403,7 @@ export default function IndexPage() {
                     </Card>
                 </div>
                 
-              ))}
+              ))} */}
             </div>
       </div>
     </DefaultLayout>
