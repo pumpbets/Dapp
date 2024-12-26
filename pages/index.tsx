@@ -22,11 +22,15 @@ import {
 import {Card, CardHeader, CardBody, Image} from "@nextui-org/react";
 import ScrollToTopButton from '@/components/totopbtn';
 import { useState, useEffect } from "react";
+
+import {api_bet_list } from "@/core/request"
+
 export default function IndexPage() {
   const [isSearch, setIsSearch] = useState(false);
   const [bets, setBets] = useState(
     [
       {
+        "id":"",
         "image":"/logo.png",
         "token": "$link",
         "types": "price_lever_to_n",
@@ -34,40 +38,44 @@ export default function IndexPage() {
         "deadline": "default",
         "bet": "Will $link leverage to 10X ?"
       },
-      {
-        "image":"/logo.png",
-        "token": "$link",
-        "types": "price_lever_to_n",
-        "bets": "10",
-        "deadline": "default",
-        "bet": "Will $link leverage to 10X ?"
-      },
-      {
-        "image":"/logo.png",
-        "token": "$link",
-        "types": "price_lever_to_n",
-        "bets": "10",
-        "deadline": "default",
-        "bet": "Will $link leverage to 10X ?"
-      },
-      {
-        "image":"/logo.png",
-        "token": "$link",
-        "types": "price_lever_to_n",
-        "bets": "10",
-        "deadline": "default",
-        "bet": "Will $link leverage to 10X ?"
-      },
-      {
-        "image":"/logo.png",
-        "token": "$link",
-        "types": "price_lever_to_n",
-        "bets": "10",
-        "deadline": "default",
-        "bet": "Will $link leverage to 10X ?"
-      }
     ]
   )
+
+  useEffect(() => {
+    const onLoad = async ()=>
+      {
+        const list = await api_bet_list(1,10)
+        let dataList: any[] = [];
+        if(!list)
+        {
+          return false;
+        }
+
+        list.data.forEach((ele:any) => {
+          if(ele?.name && ele.token && ele.tokenInfo?.img,ele.id)
+          {
+            dataList.push(
+              {
+                "id":ele.id,
+                "image":ele.tokenInfo?.img,
+                "token": ele.token,
+                "types":  ele.type,
+                "bets": ele.final,
+                "deadline": ele.deadline,
+                "bet":ele.final,
+              }
+            )
+          }
+
+        });
+
+        setBets(dataList);
+      }
+
+      onLoad().catch()
+  }
+
+)
 
   return (
     <DefaultLayout>
