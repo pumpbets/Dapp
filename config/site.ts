@@ -9,6 +9,8 @@ export const siteConfig = {
 
   ],
   links: {
+    base:"https://pumpbets.fun/",
+    redirect:"https://pumpbets.fun/api/redirect",
     github: "https://github.com/pumpbets",
     twitter: "https://x.com/macondocrypto",
     docs: "",

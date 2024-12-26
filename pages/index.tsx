@@ -33,6 +33,9 @@ import { useRouter } from 'next/router';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 
+
+import { FaShare ,FaTwitterSquare } from "react-icons/fa";
+
 import * as bs58 from "bs58"
 export default function IndexPage() {
 
@@ -48,6 +51,7 @@ export default function IndexPage() {
         "id":"",
         "image":"/logo.png",
         "token": "$link",
+        "address":"",
         "types": "price_lever_to_n",
         "bets": "10",
         "deadline": "default",
@@ -80,6 +84,7 @@ export default function IndexPage() {
                 "id":ele.id,
                 "image":ele.tokenInfo?.img,
                 "token": ele.token,
+                "address":ele.address,
                 "types":  ele.types,
                 "bets": ele.final,
                 "deadline": ele.deadline,
@@ -110,6 +115,7 @@ export default function IndexPage() {
               "id":ele.id,
               "image":ele.tokenInfo?.img,
               "token": ele.token,
+              "address":ele.address,
               "types":  ele.types,
               "bets": ele.final,
               "deadline": ele.deadline,
@@ -347,15 +353,23 @@ const newBet = async() =>
                       <CardBody className="overflow-visible py-2">
                       <h4 className="font-bold text-large">🎲 {item.bet}</h4>
                       <p className="text-tiny uppercase font-bold">{item.token}</p>
-                      <small className="text-default-500">${item.types}</small>
+                      <small className="text-default-500"> <a
+                      href={"http://pump.fun/"+item.address}
+                      >${item.types}</a></small>
 
 
                       {betButtonGenerator(item.types)}
                       
                       </CardBody>
                       <CardFooter>
-                        <div style={{width:"100%" , textAlign:"right"}}>
+                        <div style={{width:"100%" ,display:"flex",flexDirection:"row",  textAlign:"center" , gap :"10px"}}>
                           <small>Ends in : 30 H</small>
+                          <Link isExternal href={siteConfig.links.redirect + "?id="+item.id} >
+                            <FaShare/>
+                          </Link>
+                          <Link isExternal href={"https://twitter.com/intent/tweet?text="+item.bets+" : "+encodeURIComponent(siteConfig.links.redirect + "?id="+item.id)} >
+                            <FaTwitterSquare/>
+                          </Link>
                         </div>
                       </CardFooter>
                     </Card>
