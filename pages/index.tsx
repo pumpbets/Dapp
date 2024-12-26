@@ -1,3 +1,4 @@
+"use client";
 import { Link } from "@nextui-org/link";
 import { Snippet } from "@nextui-org/snippet";
 import { Code } from "@nextui-org/code";
@@ -34,12 +35,13 @@ import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 
 import * as bs58 from "bs58"
 export default function IndexPage() {
+
   const cfg = JSON.parse(JSON.stringify(configData))
   const { connected, publicKey, signMessage } = useWallet();
   const { setVisible } = useWalletModal();
   const [isSearch, setIsSearch] = useState(false);
   const [inputData, setInputData] = useState("");
-  
+  const [initLock, setInitLock] = useState(false);
   const [bets, setBets] = useState(
     [
       {
@@ -63,85 +65,32 @@ export default function IndexPage() {
     setIsSearch(false)
     const onList = async ()=>
       {
+        const list = await api_bet_list(1,10)
+        let dataList: any[] = [];
+        if(!list)
+        {
+          return false;
+        }
 
-        let dataList = bets;
-        dataList =             [
+        list.data.forEach((ele:any) => {
+          if(ele?.name && ele.token && ele.tokenInfo?.img,ele.id)
           {
-            "id":"",
-            "image":"/logo.png",
-            "token": "$link",
-            "types": "price_lever_to_n",
-            "bets": "10",
-            "deadline": "default",
-            "bet": "Will $link leverage to 10X ?"
-          },
-          {
-            "id":"",
-            "image":"/logo.png",
-            "token": "$link",
-            "types": "price_lever_to_n",
-            "bets": "10",
-            "deadline": "default",
-            "bet": "Will $link leverage to 10X ?"
-          },
-          {
-            "id":"",
-            "image":"/logo.png",
-            "token": "$link",
-            "types": "price_lever_to_n",
-            "bets": "10",
-            "deadline": "default",
-            "bet": "Will $link leverage to 10X ?"
-          },
-          {
-            "id":"",
-            "image":"/logo.png",
-            "token": "$link",
-            "types": "price_lever_to_n",
-            "bets": "10",
-            "deadline": "default",
-            "bet": "Will $link leverage to 10X ?"
-          },
-          {
-            "id":"",
-            "image":"/logo.png",
-            "token": "$link",
-            "types": "price_lever_to_n",
-            "bets": "10",
-            "deadline": "default",
-            "bet": "Will $link leverage to 10X ?"
-          },
-        ]
-        console.log("dataList")
-        // setBets(dataList)
-        
+            dataList.push(
+              {
+                "id":ele.id,
+                "image":ele.tokenInfo?.img,
+                "token": ele.token,
+                "types":  ele.types,
+                "bets": ele.final,
+                "deadline": ele.deadline,
+                "bet":ele.final,
+              }
+            )
+          }
 
-        // const list = await api_bet_list(1,10)
-        // let dataList: any[] = [];
-        // if(!list)
-        // {
-        //   return false;
-        // }
-
-        // list.data.forEach((ele:any) => {
-        //   if(ele?.name && ele.token && ele.tokenInfo?.img,ele.id)
-        //   {
-        //     dataList.push(
-        //       {
-        //         "id":ele.id,
-        //         "image":ele.tokenInfo?.img,
-        //         "token": ele.token,
-        //         "types":  ele.types,
-        //         "bets": ele.final,
-        //         "deadline": ele.deadline,
-        //         "bet":ele.final,
-        //       }
-        //     )
-        //   }
-
-        // });
-        // console.log("dataList",dataList)
-        // setBets(dataList);
+        });
+        console.log("dataList",dataList)
+        setBets(dataList);
       }
     const onSearch = async (id:string)=>
     {
@@ -188,7 +137,13 @@ export default function IndexPage() {
   
     }
 
-    init().catch()
+    if(!initLock)
+    {
+      init().catch()
+      setInitLock(true)
+      
+    }
+    
 
     console.log(
       "useEffect"
@@ -199,7 +154,9 @@ export default function IndexPage() {
 
 const searchId = async (id:string)=>
   {
+    console.log("Search the bet ::",id)
     const search = await api_bet_search(id)
+    console.log(search)
     let dataList: any[] = [];
     if(!search)
     {
@@ -207,7 +164,7 @@ const searchId = async (id:string)=>
     }
 
     const ele = search.data
-
+    
     if(ele?.name && ele.token && ele.tokenInfo?.img,ele.id)
       {
         dataList.push(
@@ -223,6 +180,7 @@ const searchId = async (id:string)=>
         )
       }
 
+    console.log(dataList)
     setBets(dataList);
     setIsSearch(true)
   }
@@ -373,7 +331,7 @@ const newBet = async() =>
           </div>
 
             <div className="maingrid">
-              {/* {bets.map((item:any, index:any) => (
+              {bets.map((item:any, index:any) => (
 
                 <div className="maingriditem" key={index+item.id}>
                       <Card className="py-4">
@@ -403,7 +361,7 @@ const newBet = async() =>
                     </Card>
                 </div>
                 
-              ))} */}
+              ))}
             </div>
       </div>
     </DefaultLayout>
